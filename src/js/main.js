@@ -1,3 +1,8 @@
+import * as THREE from "three"
+import {ParametricGeometry} from "three/examples/jsm/geometries/ParametricGeometry";
+import {AnaglyphEffect} from "three/examples/jsm/effects/AnaglyphEffect";
+
+
 let effect;
 let mouseX = 0;
 let mouseY = 0;
@@ -23,19 +28,19 @@ function createRender(){
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-    effect = new THREE.AnaglyphEffect(renderer);
+    effect = new AnaglyphEffect(renderer);
     effect.setSize(window.innerWidth, window.innerHeight);
     return renderer;
 }
 
 function createSurface(){
-    const geometry = new THREE.ParametricGeometry(richmond, 50, 50);
+    const geometry = new ParametricGeometry(richmond, 50, 50);
     const material = new THREE.MeshNormalMaterial();
 
     mesh = new THREE.Mesh( geometry, material );
     return mesh;
 }
-
+/*
 function klein ( v, u, target ) {
 
     u *= Math.PI;
@@ -91,7 +96,7 @@ function RichmondMinimalSurface(u,v,target){
                 target.set(x * scale, y * scale, z * scale);
             }
         }
-    }*/
+    }
     const denominator = Math.pow(u, 2) + Math.pow(v, 2);
     const x = (1/3)*Math.pow(u, 3) - u*Math.pow(v,2) + u/denominator;
     const y = -1*(Math.pow(u,2)*v) + (1/3)*Math.pow(v,3) - v/denominator;
@@ -100,7 +105,7 @@ function RichmondMinimalSurface(u,v,target){
     target.set(x * scale, y * scale, z * scale);
 
 }
-
+*/
 function richmond(r, t, target) {
     let rho=(1+3*radius)*r-2-radius;
     const u=Math.exp(rho)*Math.cos(2*Math.PI*t);
