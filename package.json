@@ -2,17 +2,31 @@
   "name": "treejs",
   "version": "0.0.1",
   "description": "lab1",
-  "main": "main.js",
+  "main": "old/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/AlexeyNarbutovich/RichmondSurface.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "http-server": "^14.0.0",
+    "three": "^0.134.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "babel-loader": "^8.2.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "html": "^1.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.64.1",
+    "webpack-cli": "^4.9.1"
   }
 }
