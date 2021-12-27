@@ -1,10 +1,9 @@
 import * as THREE from "three"
 import {ParametricGeometry} from "three/examples/jsm/geometries/ParametricGeometry";
-import {AnaglyphEffect} from "three/examples/jsm/effects/AnaglyphEffect";
 import {TrackballControls} from "three/examples/jsm/controls/TrackballControls";
 import {DoubleSide} from "three";
 
-let camera, controls, scene, renderer, effect, aspect, mesh;
+let camera, controls, scene, renderer, aspect, mesh;
 let radius = 0.6
 
 init();
@@ -23,7 +22,6 @@ function init() {
     let kleinSurface = createSurface();
     scene.add(kleinSurface);
     createRender();
-    window.addEventListener('resize', onWindowResize, false);
 
     controls = new TrackballControls(camera, renderer.domElement );
     controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
@@ -55,17 +53,6 @@ function createRender(){
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.body.appendChild( renderer.domElement );
-    effect = new AnaglyphEffect(renderer);
-    effect.setSize(window.innerWidth, window.innerHeight);
-}
-
-function onWindowResize() {
-    camera.aspect = aspect;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
-    controls.handleResize();
 }
 
 function animate() {
@@ -76,53 +63,7 @@ function animate() {
 
 function render(){
     renderer.render(scene,camera);
-    effect.render(scene, camera);
 }
-
-window.addEventListener('deviceorientation', e => {
-    let m2 = getRotationMatrix(e.alpha, e.beta, e.gamma);
-    let threejs_matrix4 = new THREE.Matrix4();
-    threejs_matrix4.set(
-        m2[0], m2[1], m2[2], 0,
-        m2[3], m2[4], m2[5], 0,
-        m2[6], m2[7], m2[8], 0,
-        0, 0, 0, 1
-    );
-    mesh.rotation.setFromRotationMatrix(threejs_matrix4);
-
-    renderer.render(scene, camera);
-});
-
-function getRotationMatrix(alpha, beta, gamma) {
-    let degtorad = Math.PI / 180; // Degree-to-Radian conversion
-    let _x = beta ? beta * degtorad : 0; // beta value
-    let _y = gamma ? gamma * degtorad : 0; // gamma value
-    let _z = alpha ? alpha * degtorad : 0; // alpha value
-
-    let cX = Math.cos(_x);
-    let cY = Math.cos(_y);
-    let cZ = Math.cos(_z);
-    let sX = Math.sin(_x);
-    let sY = Math.sin(_y);
-    let sZ = Math.sin(_z);
-
-// ZXY rotation matrix construction.
-
-    let m11 = cZ * cY - sZ * sX * sY;
-    let m12 = -cX * sZ;
-    let m13 = cY * sZ * sX + cZ * sY;
-
-    let m21 = cY * sZ + cZ * sX * sY;
-    let m22 = cZ * cX;
-    let m23 = sZ * sY - cZ * cY * sX;
-
-    let m31 = -cX * sY;
-    let m32 = sX;
-    let m33 = cX * cY;
-
-    return [m11, m12, m13, m21, m22, m23, m31, m32, m33];
-}
-
 
 
 
