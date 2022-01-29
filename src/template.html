@@ -1,9 +1,42 @@
 <!--src/template.html-->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title><%= htmlWebpackPlugin.options.title %></title>
-    </head>
-    <body>
-    </body>
+<head>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+        .table {
+            position: fixed;
+            width: 50px;
+            height: 100px;
+            right: 0;
+            margin: 0;
+        }
+        .table__row {
+            margin: 0;
+            width: 100%;
+            height: 28px;
+            font-size: 22px;
+        }
+        button {
+            width: 100px;
+            height: 40px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<button id="access">Request Access</button>
+<div class="table">
+    <p class="table__row" id="alpha"></p>
+    <p class="table__row" id="beta"></p>
+    <p class="table__row" id="gamma"></p>
+</div>
+<div id="geometry"></div>
+</body>
 </html>

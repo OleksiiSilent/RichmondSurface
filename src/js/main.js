@@ -4,8 +4,10 @@ import {AnaglyphEffect} from "three/examples/jsm/effects/AnaglyphEffect";
 import {TrackballControls} from "three/examples/jsm/controls/TrackballControls";
 import {DoubleSide} from "three";
 
+
 let camera, controls, scene, renderer, effect, aspect, mesh;
-let radius = 0.6
+let radius = 1.0;
+let button;
 
 init();
 animate();
@@ -20,8 +22,8 @@ function init() {
     scene.background = new THREE.Color(0x414141);
     scene.fog = new THREE.FogExp2(0xcccccc, 0.02);
 
-    let kleinSurface = createSurface();
-    scene.add(kleinSurface);
+    let surface = createSurface();
+    scene.add(surface);
     createRender();
     window.addEventListener('resize', onWindowResize, false);
 
@@ -29,17 +31,19 @@ function init() {
     controls.mouseButtons.LEFT = THREE.MOUSE.PAN;
     controls.mouseButtons.MIDDLE = THREE.MOUSE.DOLLY;
     controls.mouseButtons.RIGHT = THREE.MOUSE.ROTATE;
+    button = document.getElementById('access');
+    button.addEventListener('click', requestDeviceOrientation);
 }
 
 function createSurface(){
-    const geometry = new ParametricGeometry(richmond, 100, 100);
+    const geometry = new ParametricGeometry(richmondSurface, 100, 100);
     const material = new THREE.MeshNormalMaterial({ side:DoubleSide });
 
     mesh = new THREE.Mesh( geometry, material );
     return mesh;
 }
 
-function richmond(r, t, target) {
+function richmondSurface(r, t, target) {
     let rho=(1+3*radius)*r-2-radius;
     const u=Math.exp(rho)*Math.cos(2*Math.PI*t);
     const v=Math.exp(rho)*Math.sin(2*Math.PI*t);
@@ -54,7 +58,8 @@ function createRender(){
     renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+    let iframe = document.getElementById('geometry');
+    iframe.append( renderer.domElement );
     effect = new AnaglyphEffect(renderer);
     effect.setSize(window.innerWidth, window.innerHeight);
 }
@@ -79,19 +84,37 @@ function render(){
     effect.render(scene, camera);
 }
 
-window.addEventListener('deviceorientation', e => {
-    let m2 = getRotationMatrix(e.alpha, e.beta, e.gamma);
-    let threejs_matrix4 = new THREE.Matrix4();
-    threejs_matrix4.set(
-        m2[0], m2[1], m2[2], 0,
-        m2[3], m2[4], m2[5], 0,
-        m2[6], m2[7], m2[8], 0,
-        0, 0, 0, 1
-    );
-    mesh.rotation.setFromRotationMatrix(threejs_matrix4);
+function requestDeviceOrientation(){
+    if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+            .then(response => {
+                console.log(response);
+                if (response === 'granted') {
+                    console.log('Permission granted');
+                    window.addEventListener('deviceorientation', e => {
+                        let m2 = getRotationMatrix(e.alpha, e.beta, e.gamma);
+                        updateDataValues(e.alpha, e.beta, e.gamma);
+                        let threejs_matrix4 = new THREE.Matrix4();
+                        threejs_matrix4.set(
+                            m2[0], m2[1], m2[2], 0,
+                            m2[3], m2[4], m2[5], 0,
+                            m2[6], m2[7], m2[8], 0,
+                            0, 0, 0, 1
+                        );
+                        mesh.rotation.setFromRotationMatrix(threejs_matrix4);
 
-    renderer.render(scene, camera);
-});
+                        renderer.render(scene, camera);
+                    }, true);
+                    suppressButton();
+                }
+            }).catch((err => {
+            console.log('Err', err);
+        }));
+    } else {
+        console.log('not iOS');
+        suppressButton();
+    }
+}
 
 function getRotationMatrix(alpha, beta, gamma) {
     let degtorad = Math.PI / 180; // Degree-to-Radian conversion
@@ -122,6 +145,21 @@ function getRotationMatrix(alpha, beta, gamma) {
 
     return [m11, m12, m13, m21, m22, m23, m31, m32, m33];
 }
+
+function suppressButton(){
+    button.classList.add('hidden');
+}
+
+function updateDataValues(alpha, beta, gamma) {
+    const a = document.getElementById('alpha');
+    const b = document.getElementById('beta');
+    const g = document.getElementById('gamma');
+    a.innerText = alpha;
+    b.innerText = beta;
+    g.innerText = gamma;
+}
+
+
 
 
 

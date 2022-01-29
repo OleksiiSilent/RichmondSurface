@@ -14,8 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "css-loader": "^6.5.1",
     "express": "^4.17.1",
     "http-server": "^14.0.0",
+    "style-loader": "^3.3.1",
     "three": "^0.134.0"
   },
   "devDependencies": {
